@@ -1,5 +1,18 @@
-import { htmlToElement } from "./utils";
-
+import { delay, htmlToElement } from "./utils";
+const initStateCheckboxPrePick = () => {
+  // Add event and init value
+  const prePickCheckbox = document.getElementById("autoPickChamp");
+  const prePickModeCheck = DataStore.get("prePickMode");
+  prePickCheckbox.checked = prePickModeCheck;
+  prePickCheckbox.addEventListener("change", () => {
+    // Check if the checkbox is checked
+    if (prePickCheckbox.checked) {
+      DataStore.set("prePickMode", true);
+    } else {
+      DataStore.set("prePickMode", false);
+    }
+  });
+};
 const handleSelect = (id) => {
   const champs = DataStore.get("champions");
   const pool = DataStore.get("champPool");
@@ -45,28 +58,38 @@ const renderListChampions = () => {
   const wrapper = document.createElement("div");
   wrapper.className = "ken-champion-list";
 
-  listChampData.map((c) => {
-    const champion = document.createElement("div");
-    const avatar = document.createElement("img");
-    avatar.src = c.squarePortraitPath;
+  listChampData
+    .sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+      if (a.name > b.name) {
+        return 1;
+      }
+      return 0;
+    })
+    .map((c) => {
+      const champion = document.createElement("div");
+      const avatar = document.createElement("img");
+      avatar.src = c.squarePortraitPath;
 
-    let className = "ken-champion-item";
-    if (c.checked) {
-      className = className + " active-item";
-    }
-    champion.className = className;
-    champion.id = `${c.id}-prepick-champ`;
-    champion.textContent = c.name;
-    champion.appendChild(avatar);
+      let className = "ken-champion-item";
+      if (c.checked) {
+        className = className + " active-item";
+      }
+      champion.className = className;
+      champion.id = `${c.id}-prepick-champ`;
+      champion.textContent = c.name;
+      champion.appendChild(avatar);
 
-    champion.addEventListener("click", () => {
-      console.log("Click ", c);
-      //   champion.textContent = c.name;
-      handleSelect(c.id);
+      champion.addEventListener("click", () => {
+        console.log("Click ", c);
+        //   champion.textContent = c.name;
+        handleSelect(c.id);
+      });
+
+      wrapper.appendChild(champion);
     });
-
-    wrapper.appendChild(champion);
-  });
 
   listChamp.replaceChildren(wrapper);
 };
@@ -136,18 +159,8 @@ export function prePickChampionsUI() {
   initClearButton();
   renderListChampions();
 
-  // Add event and init value
-  const prePickCheckbox = document.getElementById("autoPickChamp");
-  const prePickModeCheck = DataStore.get("prePickMode");
-  prePickCheckbox.checked = prePickModeCheck;
-  prePickCheckbox.addEventListener("change", () => {
-    // Check if the checkbox is checked
-    if (prePickCheckbox.checked) {
-      DataStore.set("prePickMode", true);
-    } else {
-      DataStore.set("prePickMode", false);
-    }
-  });
+  //  12
+  initStateCheckboxPrePick();
 }
 // id 2 index 1
 export async function prePickChampionEvent(match) {
@@ -267,4 +280,26 @@ export async function prePickChampionEvent(match) {
 
 export function updateListOrderPrePick() {}
 
-export function pickChamp(id) {}
+export async function initUIPrePickInChampSelect() {
+  const timeContainer = () =>
+    document.getElementsByClassName("timer-status")?.[0];
+  while (!timeContainer()) {
+    // console.log("NO BOOST AREA", timeContainer());
+    await delay(500);
+  }
+
+  const checkbox = htmlToElement(`
+  <div class="auto-pick-champ" style="justify-content:center; margin-bottom:10px; margin-left :0px;">
+    <lol-uikit-flat-checkbox class="checked">
+      <input id="autoPickChamp" name="autoPickChamp" type="checkbox" class="ember-checkbox">
+      <label slot="label">Auto Pick Champion</label>
+    </lol-uikit-flat-checkbox>
+  </div>`);
+
+  const container = document.getElementsByClassName(
+    "loadouts-edit-wrapper"
+  )?.[0];
+
+  container.prepend(checkbox);
+  initStateCheckboxPrePick();
+}

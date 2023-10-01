@@ -23,3 +23,5 @@ export function waitForElm(selector) {
     });
   });
 }
+
+export const delay = (t) => new Promise((r) => setTimeout(r, t));
