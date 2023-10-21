@@ -224,26 +224,6 @@ export async function prePickChampionEvent(match) {
           finalChampIndex = poolIndex;
           finalChampId = pool[finalChampIndex]?.id;
         }
-
-        // else {
-        //   if (poolIndex < finalChampIndex) {
-
-        //     finalChampIndex = poolIndex;
-        //     finalChampId = championId;
-        //     console.log(
-        //       " ========== !!! in-pool -CHAMP",
-        //       pool[poolIndex].name,
-        //       {
-        //         finalChampId,
-        //         finalChampIndex,
-        //       }
-        //     );
-        //     DataStore.set("myPickInfo", {
-        //       index: poolIndex,
-        //       id: pool[poolIndex].id,
-        //     });
-        //   }
-        // }
       }
     });
 

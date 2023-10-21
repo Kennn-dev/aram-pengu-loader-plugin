@@ -5,7 +5,7 @@ import {
   prePickChampionEvent,
   prePickChampionsUI,
 } from "./pre-pick";
-import { delay, htmlToElement, waitForElm } from "./utils";
+import { waitForElm } from "./utils";
 console.log("Hello, League Client!, Ken Plugin is running");
 
 /* load theme from URL */
@@ -118,40 +118,11 @@ window.addEventListener("load", () => {
   waitForElm(
     "div.lol-social-lower-pane-container > lol-social-roster > lol-uikit-scrollable > div.list-content"
   ).then(() => {
-    console.log("list social-scroll RENDER 😁😁😁");
     initSettingAutoAccept();
     prePickChampionsUI();
     // initAramBoostUI();
 
     initUIPrePickInChampSelect();
-    test();
     // /lol-champ-select/v1/session/my-selection/reroll
   });
 });
-
-const test = async () => {
-  const listMenu = document.querySelector(
-    "div.lol-social-lower-pane-container > lol-social-roster > lol-uikit-scrollable > div.list-content"
-  );
-  while (!listMenu) {
-    console.log("NO container", listMenu);
-    await delay(500);
-  }
-
-  // Clear button
-  const btn =
-    htmlToElement(`<div style="position : relative;width: 100%;height: 50px;">
-    <lol-uikit-flat-button-secondary id="test-123" style="padding : 10px;position : absolute;right: 0;left: 0;top:0;" class="lol-settings-reset-button">
-    Test
-  </lol-uikit-flat-button-secondary>
-  </div>`);
-
-  listMenu.prepend(btn);
-
-  const btnTest = document.getElementById("test-123");
-  btnTest.addEventListener("click", async () => {
-    // console.log("Click ", c);
-    const res = await fetch("https://127.0.0.1:2999/liveclientdata/playerlist");
-    const value = await res.json();
-  });
-};
